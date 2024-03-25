@@ -20,6 +20,7 @@ import {
   StreamingSyncImplementationListener,
   StreamingSyncImplementation
 } from './sync/stream/AbstractStreamingSyncImplementation';
+import { Query } from '../db/Query';
 
 export interface DisconnectAndClearOptions {
   /** When set to false, data in local-only tables is preserved. */
@@ -479,6 +480,10 @@ export abstract class AbstractPowerSyncDatabase extends BaseObserver<PowerSyncDB
   async get<T>(sql: string, parameters?: any[]): Promise<T> {
     await this.waitForReady();
     return this.database.get(sql, parameters);
+  }
+
+  query<T>(sql: string, parameters?: any[]): Query<T> {
+    return new Query<T>(this, sql, parameters);
   }
 
   /**
