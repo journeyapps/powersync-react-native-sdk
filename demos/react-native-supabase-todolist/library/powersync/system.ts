@@ -1,18 +1,18 @@
 import '@azure/core-asynciterator-polyfill';
 
-import React from 'react';
-import { PowerSyncDatabase as PowerSyncDatabaseNative } from '@powersync/react-native';
-import { PowerSyncDatabase as PowerSyncDatabaseWeb } from '@powersync/web';
 import { AbstractPowerSyncDatabase, SyncStreamConnectionMethod } from '@powersync/common';
+import { PowerSyncDatabase as PowerSyncDatabaseNative } from '@powersync/react-native';
+import { PowerSyncDatabase as PowerSyncDatabaseWeb, WASQLiteOpenFactory } from '@powersync/web';
+import React from 'react';
 import { SupabaseStorageAdapter } from '../storage/SupabaseStorageAdapter';
 
-import { AppSchema } from './AppSchema';
-import { SupabaseConnector } from '../supabase/SupabaseConnector';
-import { KVStorage } from '../storage/KVStorage';
-import { PhotoAttachmentQueue } from './PhotoAttachmentQueue';
 import { type AttachmentRecord } from '@powersync/attachments';
-import { AppConfig } from '../supabase/AppConfig';
 import Logger from 'js-logger';
+import { KVStorage } from '../storage/KVStorage';
+import { AppConfig } from '../supabase/AppConfig';
+import { SupabaseConnector } from '../supabase/SupabaseConnector';
+import { AppSchema } from './AppSchema';
+import { PhotoAttachmentQueue } from './PhotoAttachmentQueue';
 
 Logger.useDefaults();
 
@@ -37,9 +37,10 @@ export class System {
     } else {
       this.powersync = new PowerSyncDatabaseWeb({
         schema: AppSchema,
-        database: {
-          dbFilename: 'sqlite.db'
-        },
+        database: new WASQLiteOpenFactory({
+          dbFilename: 'sqlite.db',
+          workerURL: new URL('dist/lib_src_worker_db_SharedWASQLiteDB_worker_js.index.umd.js')
+        })
       });
     }
 
@@ -64,7 +65,7 @@ export class System {
     await this.powersync.init();
     await this.powersync.connect(this.supabaseConnector, { connectionMethod: SyncStreamConnectionMethod.WEB_SOCKET });
 
-    console.log("connected")
+    console.log('connected');
     if (this.attachmentQueue) {
       await this.attachmentQueue.init();
     }

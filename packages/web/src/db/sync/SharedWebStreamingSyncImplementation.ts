@@ -1,16 +1,16 @@
+import { PowerSyncConnectionOptions, PowerSyncCredentials, SyncStatus, SyncStatusOptions } from '@powersync/common';
 import * as Comlink from 'comlink';
-import {
-  WebStreamingSyncImplementation,
-  WebStreamingSyncImplementationOptions
-} from './WebStreamingSyncImplementation';
+import { openWorkerDatabasePort } from '../../worker/db/open-worker-database';
+import { AbstractSharedSyncClientProvider } from '../../worker/sync/AbstractSharedSyncClientProvider';
 import {
   ManualSharedSyncPayload,
   SharedSyncClientEvent,
   SharedSyncImplementation
 } from '../../worker/sync/SharedSyncImplementation';
-import { AbstractSharedSyncClientProvider } from '../../worker/sync/AbstractSharedSyncClientProvider';
-import { PowerSyncConnectionOptions, PowerSyncCredentials, SyncStatus, SyncStatusOptions } from '@powersync/common';
-import { openWorkerDatabasePort } from '../../worker/db/open-worker-database';
+import {
+  WebStreamingSyncImplementation,
+  WebStreamingSyncImplementationOptions
+} from './WebStreamingSyncImplementation';
 
 /**
  * The shared worker will trigger methods on this side of the message port
@@ -112,7 +112,10 @@ export class SharedWebStreamingSyncImplementation extends WebStreamingSyncImplem
      * sync worker.
      */
     const { crudUploadThrottleMs, identifier, retryDelayMs } = this.options;
-    const dbOpenerPort = openWorkerDatabasePort(this.options.identifier!, true) as MessagePort;
+    const dbOpenerPort = openWorkerDatabasePort({
+      workerIdentifier: this.options.identifier!,
+      multipleTabs: true
+    }) as MessagePort;
     this.isInitialized = this.syncManager.init(Comlink.transfer(dbOpenerPort, [dbOpenerPort]), {
       dbName: this.options.identifier!,
       streamOptions: {
