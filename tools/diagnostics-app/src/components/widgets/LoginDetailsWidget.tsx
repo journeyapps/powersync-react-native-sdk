@@ -51,7 +51,8 @@ export const LoginDetailsWidget: React.FC<LoginDetailsWidgetProps> = (props) => 
               setSubmitting(false);
               setFieldError('endpoint', ex.message);
             }
-          }}>
+          }}
+        >
           {({ values, errors, handleChange, handleBlur, isSubmitting, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <FormGroup>

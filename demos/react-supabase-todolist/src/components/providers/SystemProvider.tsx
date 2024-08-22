@@ -33,7 +33,7 @@ export const SystemProvider = ({ children }: { children: React.ReactNode }) => {
     const l = connector.registerListener({
       initialized: () => {},
       sessionStarted: () => {
-        powerSync.connect(connector, {connectionMethod: SyncStreamConnectionMethod.WEB_SOCKET});
+        powerSync.connect(connector, { connectionMethod: SyncStreamConnectionMethod.WEB_SOCKET });
       }
     });
 

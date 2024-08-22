@@ -15,7 +15,7 @@ export * from './client/sync/bucket/OplogEntry';
 export * from './client/sync/stream/AbstractRemote';
 export * from './client/sync/stream/AbstractStreamingSyncImplementation';
 export * from './client/sync/stream/streaming-sync-types';
-export { MAX_OP_ID } from './client/constants'
+export { MAX_OP_ID } from './client/constants';
 
 export * from './db/crud/SyncStatus';
 export * from './db/crud/UploadQueueStatus';

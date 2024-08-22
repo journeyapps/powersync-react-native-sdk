@@ -2,7 +2,7 @@
   <a href="https://www.powersync.com" target="_blank"><img src="https://github.com/powersync-ja/.github/assets/7372448/d2538c43-c1a0-4c47-9a76-41462dba484f"/></a>
 </p>
 
-*[PowerSync](https://www.powersync.com) is a Postgres-SQLite sync layer, which helps developers to create local-first real-time reactive apps that work seamlessly both online and offline.*
+_[PowerSync](https://www.powersync.com) is a Postgres-SQLite sync layer, which helps developers to create local-first real-time reactive apps that work seamlessly both online and offline._
 
 # PowerSync JavaScript SDKs
 
@@ -17,7 +17,7 @@
 - [packages/web](./packages/web/README.md)
 
   - JS Web SDK implementation (extension of `packages/common`)
-  
+
 - [packages/react](./packages/react/README.md)
 
   - React integration for PowerSync.

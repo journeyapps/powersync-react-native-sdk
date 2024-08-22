@@ -267,7 +267,8 @@ export default function SyncDiagnosticsPage() {
           variant="contained"
           onClick={() => {
             clearData();
-          }}>
+          }}
+        >
           Clear & Redownload
         </Button>
         <S.QueryResultContainer>

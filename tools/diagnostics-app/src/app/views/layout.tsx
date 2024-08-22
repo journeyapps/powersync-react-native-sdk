@@ -118,7 +118,8 @@ export default function ViewsLayout({ children }: { children: React.ReactNode })
                 await item.beforeNavigate?.();
                 navigate(item.path);
                 setMobileOpen(false);
-              }}>
+              }}
+            >
               <ListItemIcon>{item.icon()}</ListItemIcon>
               <ListItemText primary={item.title} />
             </ListItemButton>
@@ -135,7 +136,8 @@ export default function ViewsLayout({ children }: { children: React.ReactNode })
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` }
-        }}>
+        }}
+      >
         <Toolbar>
           <IconButton
             size="large"
@@ -143,7 +145,8 @@ export default function ViewsLayout({ children }: { children: React.ReactNode })
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2, display: { md: 'none' } }}
-            onClick={handleDrawerToggle}>
+            onClick={handleDrawerToggle}
+          >
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1 }}>
@@ -173,7 +176,8 @@ export default function ViewsLayout({ children }: { children: React.ReactNode })
           sx={{
             display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
-          }}>
+          }}
+        >
           {drawer}
         </Drawer>
         <Drawer
@@ -182,7 +186,8 @@ export default function ViewsLayout({ children }: { children: React.ReactNode })
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
           }}
-          open>
+          open
+        >
           {drawer}
         </Drawer>
       </Box>

@@ -12,7 +12,8 @@ const EntryPage = () => {
     return (
       <S.MainGrid container>
         <p>
-        Syncing down from the backend. This will load indefinitely if you have not set up the connection correctly. Check the console for issues.
+          Syncing down from the backend. This will load indefinitely if you have not set up the connection correctly.
+          Check the console for issues.
         </p>
         <CircularProgress />
       </S.MainGrid>

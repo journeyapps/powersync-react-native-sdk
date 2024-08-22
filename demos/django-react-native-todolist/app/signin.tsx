@@ -24,14 +24,14 @@ export default function Signin() {
           <TextInputWidget
             style={SignInStyles.input}
             placeholder="Username"
-            autoCapitalize='none'
+            autoCapitalize="none"
             onChangeText={(value) => setCredentials({ ...credentials, username: value.toLowerCase().trim() })}
           />
           <TextInputWidget
             style={SignInStyles.input}
             placeholder="Password"
             secureTextEntry={true}
-            autoCapitalize='none'
+            autoCapitalize="none"
             onChangeText={(value) => setCredentials({ ...credentials, password: value })}
           />
           {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}

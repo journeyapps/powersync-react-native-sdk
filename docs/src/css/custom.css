@@ -38,31 +38,31 @@
 #returns + p + p + table,
 #returns + div,
 #returns + div + table,
-[id^="returns-"],
-[id^="returns-"] + p,
-[id^="returns-"] + p + p,
-[id^="returns-"] + p + p,
-[id^="returns-"] + p + p + table,
-[id^="returns-"] + div,
-[id^="returns-"] + div + table,
+[id^='returns-'],
+[id^='returns-'] + p,
+[id^='returns-'] + p + p,
+[id^='returns-'] + p + p,
+[id^='returns-'] + p + p + table,
+[id^='returns-'] + div,
+[id^='returns-'] + div + table,
 #type-parameters,
 #type-parameters + table,
-[id^="type-parameters-"],
-[id^="type-parameters-"] + table,
+[id^='type-parameters-'],
+[id^='type-parameters-'] + table,
 #inherited-from,
 #inherited-from + p,
-[id^="inherited-from-"],
-[id^="inherited-from-"] + p {
+[id^='inherited-from-'],
+[id^='inherited-from-'] + p {
   display: none;
 }
 
 /* Expand parameter and enumeration tables to full width */
 #parameters + table,
-[id^="parameters-"] + table,
+[id^='parameters-'] + table,
 #properties + table,
-[id^="properties-"] + table,
+[id^='properties-'] + table,
 #enumeration-members + table,
-[id^="enumeration-members-"] + table {
+[id^='enumeration-members-'] + table {
   width: 100%;
   table-layout: fixed;
   display: table;
