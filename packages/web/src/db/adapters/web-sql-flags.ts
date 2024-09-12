@@ -36,7 +36,12 @@ export interface WebSQLFlags {
   ssrMode?: boolean;
 }
 
+export type RequiredWebSQLFlags = Required<WebSQLFlags>;
+
 export interface BaseWebSQLOpenOptions extends SQLOpenOptions {
+  /**
+   * These should be the resolved flags.
+   */
   flags?: WebSQLFlags;
 }
 
@@ -50,7 +55,8 @@ export interface WebSQLOpenFactoryOptions extends BaseWebSQLOpenOptions {
    * You can either provide a path to the worker script
    * or a factory method that returns a worker.
    */
-  worker?: string | URL | ((options?: BaseWebSQLOpenOptions) => Worker | SharedWorker);
+  // TODO cleanup
+  worker?: string | URL | ((options: BaseWebSQLOpenOptions & { flags: RequiredWebSQLFlags }) => Worker | SharedWorker);
 }
 
 export function isServerSide() {
@@ -73,7 +79,7 @@ export const DEFAULT_WEB_SQL_FLAGS: Required<WebSQLFlags> = {
   useWebWorker: true
 };
 
-export function resolveWebSQLFlags(flags?: WebSQLFlags): WebSQLFlags {
+export function resolveWebSQLFlags(flags?: WebSQLFlags): Required<WebSQLFlags> {
   const resolvedFlags = {
     ...DEFAULT_WEB_SQL_FLAGS,
     ...(flags ?? {})
