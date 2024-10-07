@@ -1,32 +1,33 @@
+import type { QuickSQLiteConnection } from '@journeyapps/react-native-quick-sqlite';
 import {
   BaseObserver,
   DBAdapter,
   DBAdapterListener,
+  DBGetUtils,
+  DBLockOptions,
   LockContext as PowerSyncLockContext,
   Transaction as PowerSyncTransaction,
-  DBLockOptions,
-  DBGetUtils,
   QueryResult
 } from '@powersync/common';
-import type { QuickSQLiteConnection } from '@journeyapps/react-native-quick-sqlite';
+
+export type DeferedRNQSOptions = {
+  dbFilename: string;
+  location?: string;
+};
 
 /**
  * Adapter for React Native Quick SQLite
  */
-export class RNQSDBAdapter extends BaseObserver<DBAdapterListener> implements DBAdapter {
+export class DeferedRNQSDBAdapter extends BaseObserver<DBAdapterListener> implements DBAdapter {
   getAll: <T>(sql: string, parameters?: any[]) => Promise<T[]>;
   getOptional: <T>(sql: string, parameters?: any[]) => Promise<T | null>;
   get: <T>(sql: string, parameters?: any[]) => Promise<T>;
 
-  constructor(
-    protected baseDB: QuickSQLiteConnection,
-    public name: string
-  ) {
+  protected initialized: Promise<void>;
+  protected baseDB: QuickSQLiteConnection | null;
+
+  constructor(protected options: DeferedRNQSOptions) {
     super();
-    // link table update commands
-    baseDB.registerTablesChangedHook((update) => {
-      this.iterateListeners((cb) => cb.tablesUpdated?.(update));
-    });
 
     const topLevelUtils = this.generateDBHelpers({
       // Arrow function binds `this` for use in readOnlyExecute
@@ -36,40 +37,73 @@ export class RNQSDBAdapter extends BaseObserver<DBAdapterListener> implements DB
     this.getAll = topLevelUtils.getAll;
     this.getOptional = topLevelUtils.getOptional;
     this.get = topLevelUtils.get;
+    this.baseDB = null;
+    this.initialized = this.init();
+  }
+
+  get name() {
+    return this.options.dbFilename;
+  }
+
+  protected get db() {
+    if (!this.baseDB) {
+      throw new Error(`Initialization is not yet completed`);
+    }
+    return this.baseDB;
+  }
+
+  protected async init() {
+    // TODO try catch
+    const { open } = await import('@journeyapps/react-native-quick-sqlite');
+    const db = open(this.options.dbFilename, {
+      location: this.options.location
+    });
+
+    // link table update commands
+    db.registerTablesChangedHook((update) => {
+      this.iterateListeners((cb) => cb.tablesUpdated?.(update));
+    });
+    this.baseDB = db;
   }
 
   close() {
-    return this.baseDB.close();
+    this.initialized.then(()=> this.baseDB?.close())
   }
 
-  readLock<T>(fn: (tx: PowerSyncLockContext) => Promise<T>, options?: DBLockOptions): Promise<T> {
-    return this.baseDB.readLock((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
+  async readLock<T>(fn: (tx: PowerSyncLockContext) => Promise<T>, options?: DBLockOptions): Promise<T> {
+    await this.initialized;
+    return this.db.readLock((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
   }
 
-  readTransaction<T>(fn: (tx: PowerSyncTransaction) => Promise<T>, options?: DBLockOptions): Promise<T> {
-    return this.baseDB.readTransaction((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
+  async readTransaction<T>(fn: (tx: PowerSyncTransaction) => Promise<T>, options?: DBLockOptions): Promise<T> {
+    await this.initialized;
+    return this.db.readTransaction((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
   }
 
-  writeLock<T>(fn: (tx: PowerSyncLockContext) => Promise<T>, options?: DBLockOptions): Promise<T> {
-    return this.baseDB.writeLock((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
+  async writeLock<T>(fn: (tx: PowerSyncLockContext) => Promise<T>, options?: DBLockOptions): Promise<T> {
+    await this.initialized;
+    return this.db.writeLock((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
   }
 
-  writeTransaction<T>(fn: (tx: PowerSyncTransaction) => Promise<T>, options?: DBLockOptions): Promise<T> {
-    return this.baseDB.writeTransaction((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
+  async writeTransaction<T>(fn: (tx: PowerSyncTransaction) => Promise<T>, options?: DBLockOptions): Promise<T> {
+    await this.initialized;
+    return this.db.writeTransaction((dbTx) => fn(this.generateDBHelpers(dbTx)), options);
   }
 
-  execute(query: string, params?: any[]) {
-    return this.baseDB.execute(query, params);
+  async execute(query: string, params?: any[]) {
+    await this.initialized;
+    return this.db.execute(query, params);
   }
 
   async executeBatch(query: string, params: any[][] = []): Promise<QueryResult> {
+    await this.initialized;
     const commands: any[] = [];
 
     for (let i = 0; i < params.length; i++) {
       commands.push([query, params[i]]);
     }
 
-    const result = await this.baseDB.executeBatch(commands);
+    const result = await this.db.executeBatch(commands);
     return {
       rowsAffected: result.rowsAffected ? result.rowsAffected : 0
     };
@@ -81,8 +115,9 @@ export class RNQSDBAdapter extends BaseObserver<DBAdapterListener> implements DB
    * the hood. Helper methods such as `get`, `getAll` and `getOptional` are read only,
    * and should use this method.
    */
-  private readOnlyExecute(sql: string, params?: any[]) {
-    return this.baseDB.readLock((ctx) => ctx.execute(sql, params));
+  private async readOnlyExecute(sql: string, params?: any[]) {
+    await this.initialized;
+    return this.db.readLock((ctx) => ctx.execute(sql, params));
   }
 
   /**

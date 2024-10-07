@@ -1,12 +1,9 @@
-import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import inject from '@rollup/plugin-inject';
 import json from '@rollup/plugin-json';
-import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import terser from '@rollup/plugin-terser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,14 +29,9 @@ export default (commandLineArgs) => {
         preventAssignment: true
       }),
       json(),
-      nodeResolve({ preferBuiltins: false }),
+      // nodeResolve({ preferBuiltins: false }),
       commonjs({
-        ignore: (id) => {
-          if (id === '@journeyapps/react-native-quick-sqlite') {
-            return true;
-          }
-          return false;
-        },
+       
       }),
       inject({
         Buffer: ['@craftzdog/react-native-buffer', 'Buffer'],
@@ -47,12 +39,13 @@ export default (commandLineArgs) => {
         TextEncoder: ['text-encoding', 'TextEncoder'],
         TextDecoder: ['text-encoding', 'TextDecoder'],
         // injecting our crypto implementation
-        crypto: path.resolve('./vendor/crypto.js')
+        crypto: path.resolve('./vendor/crypto.js'),
+        exclude: ['@journeyapps/react-native-quick-sqlite']
       }),
-      alias({
-        entries: [{ find: 'bson', replacement: path.resolve(__dirname, '../../node_modules/bson/lib/bson.rn.cjs') }]
-      }),
-      terser()
+      // alias({
+      //   entries: [{ find: 'bson', replacement: path.resolve(__dirname, '../../node_modules/bson/lib/bson.rn.cjs') }]
+      // }),
+      // terser()
     ],
     external: [
       '@journeyapps/react-native-quick-sqlite',

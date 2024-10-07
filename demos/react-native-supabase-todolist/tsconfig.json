@@ -3,6 +3,5 @@
   "compilerOptions": {
     "strict": true,
     "composite": true,
-    "moduleResolution": "Bundler"
   }
 }
