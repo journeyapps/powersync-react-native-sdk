@@ -11,6 +11,7 @@ import { AppConfig } from '../supabase/AppConfig';
 import { SupabaseConnector } from '../supabase/SupabaseConnector';
 import { AppSchema } from './AppSchema';
 import { PhotoAttachmentQueue } from './PhotoAttachmentQueue';
+// import { OPSqliteOpenFactory } from '@powersync/op-sqlite'; // Add this import
 
 Logger.useDefaults();
 
@@ -31,6 +32,10 @@ export class System {
         dbFilename: 'sqlite.db'
       }
     });
+    // const factory = new OPSqliteOpenFactory({
+    //   dbFilename: 'sqlite.db'
+    // });
+    // this.powersync = new PowerSyncDatabase({ database: factory, schema: AppSchema });
     /**
      * The snippet below uses OP-SQLite as the default database adapter.
      * You will have to uninstall `@journeyapps/react-native-quick-sqlite` and

@@ -1,5 +1,6 @@
 packages:
   - "demos/*"
   - "packages/*"
+  - "packages/powersync-op-sqlite/example"
   - "tools/*"
   - "docs/"

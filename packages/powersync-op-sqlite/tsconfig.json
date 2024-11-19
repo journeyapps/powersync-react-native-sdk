@@ -7,7 +7,6 @@
     },
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
-    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "esModuleInterop": true
