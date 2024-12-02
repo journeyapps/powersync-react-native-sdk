@@ -154,5 +154,5 @@ export class DrizzleAppSchema<
     this.types = {} as SchemaTableType<Expand<TablesFromSchemaEntries<T>>>;
   }
 
-  types: SchemaTableType<Expand<TablesFromSchemaEntries<T>>>;
+  readonly types: SchemaTableType<Expand<TablesFromSchemaEntries<T>>>;
 }
