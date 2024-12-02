@@ -1,4 +1,12 @@
-import { column, IndexShorthand, Schema, Table, type BaseColumnType, type TableV2Options } from '@powersync/common';
+import {
+  column,
+  IndexShorthand,
+  Schema,
+  SchemaTableType,
+  Table,
+  type BaseColumnType,
+  type TableV2Options
+} from '@powersync/common';
 import { InferSelectModel, isTable, Relations } from 'drizzle-orm';
 import {
   getTableConfig,
@@ -143,8 +151,8 @@ export class DrizzleAppSchema<
   constructor(drizzleSchema: T) {
     super(toPowerSyncTables(drizzleSchema));
     // This is just used for typing
-    this.types = {} as Expand<TablesFromSchemaEntries<T>>;
+    this.types = {} as SchemaTableType<Expand<TablesFromSchemaEntries<T>>>;
   }
 
-  types: Expand<TablesFromSchemaEntries<T>>;
+  types: SchemaTableType<Expand<TablesFromSchemaEntries<T>>>;
 }

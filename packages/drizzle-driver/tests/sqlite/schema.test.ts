@@ -29,6 +29,25 @@ describe('toPowerSyncTable', () => {
     expect(convertedList).toEqual(expectedLists);
   });
 
+  it('basic conversion class', () => {
+    const lists = sqliteTable('lists', {
+      id: text('id').primaryKey(),
+      name: text('name').notNull(),
+      owner_id: text('owner_id'),
+      counter: integer('counter'),
+      completion: real('completion')
+    });
+    const convertedList = new DrizzleAppSchema({ lists });
+
+    const a: (typeof convertedList)['types']['lists'] = {
+      name: 'd',
+      completion: 1,
+      counter: 0,
+      id: '1',
+      owner_id: null
+    };
+  });
+
   it('classed based types', () => {
     const lists = sqliteTable('lists', {
       id: text('id').primaryKey(),
