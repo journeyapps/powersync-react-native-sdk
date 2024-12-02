@@ -143,7 +143,7 @@ export class DrizzleAppSchema<
   constructor(drizzleSchema: T) {
     super(toPowerSyncTables(drizzleSchema));
     // This is just used for typing
-    this.types = {} as any;
+    this.types = {} as Expand<TablesFromSchemaEntries<T>>;
   }
 
   types: Expand<TablesFromSchemaEntries<T>>;
