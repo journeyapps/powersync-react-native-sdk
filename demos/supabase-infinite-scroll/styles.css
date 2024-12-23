@@ -1,0 +1,110 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+h1,
+h3 {
+  text-align: center;
+  width: 300px;
+  margin-bottom: 0px;
+}
+
+h3 {
+  margin: 0px;
+}
+.content-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+#console-wrapper {
+  width: 250px;
+  height: 386px;
+  border: 1px solid #ccc;
+  overflow-y: scroll;
+  position: relative;
+}
+
+#listBox, #console-list {
+  width: 250px;
+  height: 390px;
+  border: 1px solid #ccc;
+  overflow-y: scroll;
+  position: relative;
+}
+
+#listItems {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20000px;
+}
+
+.list-item {
+  padding: 1px;
+  cursor: pointer;
+  height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+
+#listItems {
+   position: relative; 
+}
+
+#spinner {
+   position: absolute; /* Make sure spinner does not take up space in the document flow */
+   top: 180px; /* Position the spinner 1/5th of the way down from the top of #listBox */
+   left: 100px; /* Center horizontally */
+   transform: translate(-50%, 0); /* Adjust the spinner to be perfectly centered */
+   width: 20px; /* Smaller spinner size */
+   height: 20px; /* Smaller spinner size */
+   border: 4px solid #f0f0f0; /* Light grey border */
+   border-top: 4px solid #888; /* Dark grey spinner indicator */
+   border-radius: 50%;
+   animation: spin 1s linear infinite;
+   z-index: 1000; /* Spinner on top of other content */
+   pointer-events: none; /* Ensure spinner doesn't interfere with scrolling */
+}
+
+.hidden {
+   display: none; /* Hide spinner when not rendering */
+}
+
+@keyframes spin {
+   0% {
+      transform: rotate(0deg);
+   }
+   100% {
+      transform: rotate(360deg);
+   }
+}

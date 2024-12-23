@@ -1,0 +1,18 @@
+bucket_definitions:
+  global:
+    data:
+      # Sync all rows (scenario "Pre-sync all data and query the local database")
+      - SELECT * FROM list
+  by_page: 
+    # Sync by page number (scenario "Control data sync using client parameters")
+    accept_potentially_dangerous_queries: true
+    parameters: SELECT (request.parameters() ->> 'current_page') as page_number
+    data:
+    - SELECT * FROM paged_list WHERE paged_list.page = bucket.page_number
+
+  by_uuid:
+    # Sync rows having user_id in sync_to array (secnario "Client-side triggers a server-side function to flag data to sync")
+    parameters: SELECT request.user_id() as user_id 
+    data:
+    - SELECT id, text, created_at from syncto_list WHERE bucket.user_id IN sync_to
+  

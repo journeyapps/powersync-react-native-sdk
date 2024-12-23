@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>PowerSync Infinite Scroll Demos</title>
+   <link rel="stylesheet" href="styles.css">
+</head>
+
+<body id="body">
+   <div id="app">
+
+
+      <div style="display: flex; flex-direction: column; align-items: center; width:250px">
+         <h2>Infinite Scroll Demos</h2>
+      </div>
+      <div class="content-wrapper">
+         <div id="listBox">
+            <div id="listItems"></div> <!-- This will scroll -->
+         </div>
+         <div id="spinner" class="spinner hidden"></div> <!-- Spinner stays fixed -->
+         <div class="button-container">
+            <h3 id="which">select method</h3>
+            <button id="arrayProvider">0: In-memory</button>
+            <button disabled id="preSyncProvider">1: Pre-Sync all data</button>
+            <button disabled id="pagedSyncProvider">2: Paged via client params</button>
+            <button disabled id="triggerSyncProvider">3: Server-side triggers</button>
+            <button disabled>4: Load from API (not implemented)</button>
+         </div>
+      </div>
+
+
+      <div>
+         <div style="width:fit-content; margin-left:auto; margin-right:auto;margin-top:10px;">
+            console output
+         </div>
+         <div id="console-list"></div>
+      </div>
+   </div>
+
+
+   <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+   <script>eruda.init();</script> -->
+
+   <script type="module" src="src/index.js"></script>
+</body>
+
+</html>
