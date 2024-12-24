@@ -4,50 +4,53 @@ const logger = Logger.get("src/listBox/itemBuffer");
 
 export default function useItemBuffer(config) {
    let items = [];
-   let startIndex = 0;
-   let inhere = false;
+   let fetchPromise = null;
 
    async function fetchItems(start, count) {
-      const result = await config.dataSource.getItems(
-         start,
-         count + config.prefetchCount
-      );
-      return result;
-   }
-
-   async function ensureItems(count) {
       try {
-         inhere = true;
-
-         if (count > items.length) {
-            const newItems = await fetchItems(items.length, count);
-
-            items.push(...newItems);
+         if (fetchPromise) {
+            await fetchPromise;
          }
-         inhere = false;
+
+         fetchPromise = config.dataSource.getItems(
+            start,
+            count + config.prefetchCount
+         );
+
+         const newItems = await fetchPromise;
+
+         // Extend array if needed
+         if (start + newItems.length > items.length) {
+            items = [
+               ...items.slice(0, start),
+               ...newItems
+            ];
+         }
+
+         return newItems;
       } catch (error) {
          logger.error("Error fetching items:", error);
+         throw error;
+      } finally {
+         fetchPromise = null;
       }
    }
 
    async function getItems(start, count) {
-
-      if (start + count >= items.length) {
-         await ensureItems(start + count);
+      if (start + count > items.length) {
+         await fetchItems(start, count);
       }
 
-      const result = [...items.slice(start, start + count)];
-      return result;
+      return items.slice(start, start + count);
    }
 
    async function getItemCount() {
       return config.dataSource.getItemCount();
    }
+
    return {
-      items,
-      getBuffer: () => [...items],
-      ensureItems,
       getItems,
       getItemCount,
+      getBuffer: () => [...items],
    };
 }
