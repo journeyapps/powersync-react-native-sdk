@@ -42,6 +42,7 @@ pnpm dev
 This will start the Vite development server. Open your browser and navigate to the URL provided in the terminal (usually [http://localhost:5173](http://localhost:5173)) to view the demo. Use the control buttons to toggle between scenarios and get a feel for the behavior.
 
 ## Specific Scenarios
+
 This section provides an index to the various scenarios described in the [docs](https://docs.powersync.com/usage/use-case-examples/infinite-scrolling).
 
 ### Pre-sync all data and query the local database
@@ -66,11 +67,13 @@ This section provides an index to the various scenarios described in the [docs](
 ## Framework For Running Scenarios
 
 ### Page Framework Files
+
 `styles.css`
 `index.html`
 `index.js`
 
 ### Virtual Listbox
+
 `src/listBox/index.js`
 `src/listBox/itemBuffer.js`
 
