@@ -89,7 +89,8 @@ export class OPSQLiteDBAdapter extends BaseObserver<DBAdapterListener> implement
     const DB: DB = this.openDatabase(dbFilename, this.options.sqliteOptions.encryptionKey);
 
     //Load extension for all connections
-    this.loadExtension(DB);
+    this.loadPowerSyncExtension(DB);
+    this.loadConfiguredExtensions(DB);
 
     await DB.execute('SELECT powersync_init()');
 
@@ -101,15 +102,23 @@ export class OPSQLiteDBAdapter extends BaseObserver<DBAdapterListener> implement
   private getDbLocation(dbLocation?: string): string {
     if (Platform.OS === 'ios') {
       return dbLocation ?? IOS_LIBRARY_PATH;
-    } else {
-      return dbLocation ?? ANDROID_DATABASE_PATH;
     }
+
+    return dbLocation ?? ANDROID_DATABASE_PATH;
   }
 
   private openDatabase(dbFilename: string, encryptionKey?: string): DB {
+    // Special handling for in-memory database
+    if (dbFilename === ':memory:') {
+      return open({
+        name: ':memory:',
+        location: ':memory'
+      });
+    }
+
     //This is needed because an undefined/null dbLocation will cause the open function to fail
     const location = this.getDbLocation(this.options.dbLocation);
-    //Simarlily if the encryption key is undefined/null when using SQLCipher it will cause the open function to fail
+    //Similarly if the encryption key is undefined/null when using SQLCipher it will cause the open function to fail
     if (encryptionKey) {
       return open({
         name: dbFilename,
@@ -124,7 +133,15 @@ export class OPSQLiteDBAdapter extends BaseObserver<DBAdapterListener> implement
     }
   }
 
-  private loadExtension(DB: DB) {
+  private loadConfiguredExtensions(DB: DB) {
+    if (this.options.sqliteOptions.extensions) {
+      for (const extension of this.options.sqliteOptions.extensions) {
+        DB.loadExtension(extension.path, extension.entryPoint);
+      }
+    }
+  }
+
+  private loadPowerSyncExtension(DB: DB) {
     if (Platform.OS === 'ios') {
       const bundlePath: string = NativeModules.PowerSyncOpSqlite.getBundlePath();
       const libPath = `${bundlePath}/Frameworks/powersync-sqlite-core.framework/powersync-sqlite-core`;

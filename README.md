@@ -42,7 +42,7 @@
 
   - Drizzle integration (ORM) for React Native and JavaScript/TypeScript projects.
 
-- [packages/powersync-op-sqlite](./packages/powersync-op-sqlite/README.md)
+- [packages/op-sqlite](./packages/op-sqlite/README.md)
 
   - OP-SQLite integration for React Native projects.
 
