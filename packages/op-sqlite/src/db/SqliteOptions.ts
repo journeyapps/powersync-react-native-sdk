@@ -66,5 +66,6 @@ export const DEFAULT_SQLITE_OPTIONS: Required<SqliteOptions> = {
   synchronous: SqliteSynchronous.normal,
   journalSizeLimit: 6 * 1024 * 1024,
   lockTimeoutMs: 30000,
-  encryptionKey: null
+  encryptionKey: null,
+  extensions: []
 };
