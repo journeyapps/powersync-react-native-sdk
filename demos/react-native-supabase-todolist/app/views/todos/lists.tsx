@@ -9,6 +9,7 @@ import { LIST_TABLE, TODO_TABLE, ListRecord } from '../../../library/powersync/A
 import { useSystem } from '../../../library/powersync/system';
 import { useQuery, useStatus } from '@powersync/react-native';
 import { ListItemWidget } from '../../../library/widgets/ListItemWidget';
+import { sql } from 'kysely';
 
 const description = (total: number, completed: number = 0) => {
   return `${total - completed} pending, ${completed} completed`;
@@ -31,15 +32,18 @@ const ListsViewWidget: React.FC = () => {
   const createNewList = async (name: string) => {
     const userID = await system.supabaseConnector.userId();
 
-    const res = await system.powersync.execute(
-      `INSERT INTO ${LIST_TABLE} (id, created_at, name, owner_id) VALUES (uuid(), datetime(), ?, ?) RETURNING *`,
-      [name, userID]
-    );
+    const res =
+      await system.kyselyDb.insertInto('lists') // or LIST_TABLE if it's a variable
+        .values({
+          id: sql`uuid()`,
+          created_at: sql`datetime()`,
+          name,
+          owner_id: userID,
+        })
+        // If you want all columns returned, use returningAll()
+        .returningAll()
+        .execute();
 
-    const resultRecord = res.rows?.item(0);
-    if (!resultRecord) {
-      throw new Error('Could not create list');
-    }
   };
 
   const deleteList = async (id: string) => {

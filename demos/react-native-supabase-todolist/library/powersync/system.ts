@@ -9,9 +9,10 @@ import Logger from 'js-logger';
 import { KVStorage } from '../storage/KVStorage';
 import { AppConfig } from '../supabase/AppConfig';
 import { SupabaseConnector } from '../supabase/SupabaseConnector';
-import { AppSchema } from './AppSchema';
+import { AppSchema, Database } from './AppSchema';
 import { PhotoAttachmentQueue } from './PhotoAttachmentQueue';
 import { configureFts } from '../fts/fts_setup';
+import { PowerSyncKyselyDatabase, wrapPowerSyncWithKysely } from '@powersync/kysely-driver';
 
 Logger.useDefaults();
 
@@ -21,6 +22,7 @@ export class System {
   supabaseConnector: SupabaseConnector;
   powersync: PowerSyncDatabase;
   attachmentQueue: PhotoAttachmentQueue | undefined = undefined;
+  kyselyDb: PowerSyncKyselyDatabase<Database>;
 
   constructor() {
     this.kvStorage = new KVStorage();
@@ -32,6 +34,9 @@ export class System {
         dbFilename: 'sqlite.db'
       }
     });
+
+    this.kyselyDb = wrapPowerSyncWithKysely<Database>(this.powersync);
+
     /**
      * The snippet below uses OP-SQLite as the default database adapter.
      * You will have to uninstall `@journeyapps/react-native-quick-sqlite` and
