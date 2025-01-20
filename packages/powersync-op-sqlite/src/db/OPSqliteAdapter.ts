@@ -1,9 +1,23 @@
-import { BaseObserver, DBAdapter, DBAdapterListener, DBLockOptions, QueryResult, Transaction } from '@powersync/common';
-import { ANDROID_DATABASE_PATH, IOS_LIBRARY_PATH, open, type DB } from '@op-engineering/op-sqlite';
+import {
+  BaseObserver,
+  DBAdapter,
+  DBAdapterListener,
+  DBLockOptions,
+  QueryResult,
+  Transaction
+} from '@powersync/common';
+import {
+  ANDROID_DATABASE_PATH,
+  getDylibPath,
+  IOS_LIBRARY_PATH,
+  open,
+  type DB
+} from '@op-engineering/op-sqlite';
 import Lock from 'async-lock';
 import { OPSQLiteConnection } from './OPSQLiteConnection';
 import { NativeModules, Platform } from 'react-native';
 import { SqliteOptions } from './SqliteOptions';
+import { getBundlePath } from '..';
 
 /**
  * Adapter for React Native Quick SQLite
@@ -88,8 +102,9 @@ export class OPSQLiteDBAdapter extends BaseObserver<DBAdapterListener> implement
     const dbFilename = filenameOverride ?? this.options.name;
     const DB: DB = this.openDatabase(dbFilename, this.options.sqliteOptions.encryptionKey);
 
-    //Load extension for all connections
-    this.loadExtension(DB);
+    //Load extensions for all connections
+    this.loadAdditionalExtensions(DB);
+    this.loadPowerSyncExtension(DB);
 
     await DB.execute('SELECT powersync_init()');
 
@@ -124,9 +139,17 @@ export class OPSQLiteDBAdapter extends BaseObserver<DBAdapterListener> implement
     }
   }
 
-  private loadExtension(DB: DB) {
+  private loadAdditionalExtensions(DB: DB) {
+    if (this.options.sqliteOptions.extensions.length > 0) {
+      for (const extension of this.options.sqliteOptions.extensions) {
+        DB.loadExtension(extension.path, extension.entryPoint);
+      }
+    }
+  }
+
+  private async loadPowerSyncExtension(DB: DB) {
     if (Platform.OS === 'ios') {
-      const bundlePath: string = NativeModules.PowerSyncOpSqlite.getBundlePath();
+      const bundlePath: string = getBundlePath();
       const libPath = `${bundlePath}/Frameworks/powersync-sqlite-core.framework/powersync-sqlite-core`;
       DB.loadExtension(libPath, 'sqlite3_powersync_init');
     } else {
